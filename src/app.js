@@ -15,4 +15,4 @@ app.use(express.urlencoded({extended: true, limit: "1mb"})); //url encoder, taki
 app.use(express.static("public")); //to serve static files
 app.use(cookieParser()); //to parse cookies from request
 
-export {app}
+export {app};
