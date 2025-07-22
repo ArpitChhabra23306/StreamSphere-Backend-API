@@ -14,19 +14,18 @@ const uploadOnCloudinary = async (filePath) => {
         if(!filePath) {
             throw new Error("File path is required for uploading to Cloudinary");
         }
-
         // upload the file to Cloudinary
-        cloudinary.uploader.upload(filePath)
+        const response = await cloudinary.uploader.upload(filePath, {
+            resource_type: "auto", 
+        })
+        console.log("File uploaded successfully", response.url);
+        return response;
     } catch (error) {
-        
+        fs.unlinkSync(filePath); // delete the file if upload fails, removing it from the local system
+        console.error("Error uploading file to Cloudinary:", error);
     }
 }
 
 
-cloudinary.v2.uploader.upload("dog.mp4", {
-  resource_type: "auto", 
-  public_id: "my_dog",
-  overwrite: true, 
-  notification_url: "https://mysite.example.com/notify_endpoint"})
-.then(result=>console.log(result));
+export { uploadOnCloudinary };
 
