@@ -28,7 +28,6 @@ const userSchema = new Schema(
         },
         avatar: {
             type: String, //claudnary url
-            required: true,
         },
         coverImage: {
             type: String, //claudnary url
@@ -88,7 +87,7 @@ userSchema.methods.generateRefreshToken = function() {
         { //sign method is used to generate token
             _id: this._id,
         },
-        process.env.REFRESH_TOKEN_SECRET, //secret key
+        process.env. REFRESH_TOKEN_SECRET, //secret key
         {
             expiresIn: process.env.REFRESH_TOKEN_EXPIRY
         } 

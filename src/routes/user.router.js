@@ -8,16 +8,16 @@ router.route("/register").post(
     upload.fields([
         {
             name: "avatar", 
-            maxCount: 1 // Limit to one avatar image
+            maxCount: 1
         },
         {
             name: "coverImage",
             maxCount: 1 
-        },
-        {}
+        }
     ]),
     registerUser
-) // http://localhost:8000/api/v1/users/register
+);
+// http://localhost:8000/api/v1/users/register
 
 
 export default router;
