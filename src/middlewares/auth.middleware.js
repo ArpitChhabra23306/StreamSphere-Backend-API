@@ -1,0 +1,28 @@
+import { asyncHandler } from "../utils/asyncHandler";
+import ApiErrors from "../utils/ApiErrors";
+import jwt from "jsonwebtoken";
+import {User} from "../models/user.model.js";
+
+export const verifyJWt = asyncHandler( async(req, res, next) => {
+    try {
+        const token = req.cookies?.accessToken || req.headers("Authorization")?.replace("Bearer","")
+    
+        if (!token) {
+            throw new ApiErrors(401, "Access token is missing or invalid");
+        }
+    
+        const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    
+        const user = await User.findById(decodedToken._id).select("-password -refreshToken") //using _id beacuse we are using _id in token while making it
+    
+        if(!user) {
+            throw new ApiErrors(404, "User not found");
+        }
+    
+        req.user = user; // attach user to request object
+        next(); // proceed to the next middleware or route handler
+
+    } catch (error) {
+        throw new ApiErrors(401, "Invalid access token");
+    }
+})

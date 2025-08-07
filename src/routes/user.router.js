@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { registerUser } from "../controllers/user.controller.js";
+import { loginUser, logoutUser, registerUser } from "../controllers/user.controller.js";
 import {upload} from "../middlewares/multer.middleware.js"; // Assuming multer is used for file uploads
+import { verifyJWt } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
@@ -18,6 +19,11 @@ router.route("/register").post(
     registerUser
 );
 // http://localhost:8000/api/v1/users/register
+
+router.route("/login").post(loginUser)
+
+
+router.route("logout").post(verifyJWt, logoutUser); //thats why next was used in auth middleware, so after its completing we can move to logoutUser controller
 
 
 export default router;

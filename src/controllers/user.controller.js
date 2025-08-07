@@ -38,8 +38,8 @@ const registerUser = asyncHandler(async (req, res) => {
     // check for images, check for avatar and cover image - in routes file and same file too
     // upload them to cloudnary - in same file
     // create user object - create entry in db
-    // remove passwrod and refresh token fro response
-    // check for user creatinn
+    // remove passwrod and refresh token from response
+    // check for user creation
     // return response
 
 
@@ -152,6 +152,23 @@ const loginUser = asyncHandler(async (req, res) => {
     
 });
 
+const logoutUser = asyncHandler(async (req, res) => {
+
+    await User.findByIdAndUpdate(req.user._id, { refreshToken: null }, { new: true });
+
+    const options = {
+        httpOnly: true, // Cookie is not accessible via JavaScript, only sent to the server
+        secure: true, // Cookie is only sent over HTTPS
+    }
+
+    return res
+        .status(200)
+        .cookie("accessToken", options) // Clear the access token cookie
+        .cookie("refreshToken", options) // Clear the refresh token cookie
+        .json(new ApiResponse(200, null, "User logged out successfully"));
+
+})
 
 
-export { registerUser, loginUser };
+
+export { registerUser, loginUser, logoutUser };
