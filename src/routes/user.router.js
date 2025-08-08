@@ -20,10 +20,12 @@ router.route("/register").post(
 );
 // http://localhost:8000/api/v1/users/register
 
-router.route("/login").post(loginUser)
+
+router.route("/login").post(loginUser);
 
 
-router.route("logout").post(verifyJWt, logoutUser); //thats why next was used in auth middleware, so after its completing we can move to logoutUser controller
+router.route("/logout").post(verifyJWt, logoutUser); //thats why next was used in auth middleware, so after its completing we can move to logoutUser controller
 
+console.log("User router executing");
 
 export default router;

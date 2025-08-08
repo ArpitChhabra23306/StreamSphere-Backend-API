@@ -120,7 +120,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const {email,username,password} = req.body;
 
-    if (!email || !username) {
+    if (!email && !username) {
         throw new ApiErrors(400, "Please provide email or username");
     }
 
