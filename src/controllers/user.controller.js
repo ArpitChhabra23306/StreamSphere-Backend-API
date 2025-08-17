@@ -168,11 +168,12 @@ const logoutUser = asyncHandler(async (req, res) => {
         .cookie("refreshToken", options) // Clear the refresh token cookie
         .json(new ApiResponse(200, null, "User logged out successfully"));
 
-})
+});
 
 
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
+    
     const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
     if(incomingRefreshToken){
         throw new ApiErrors(400, "unauthorized, please login again");
