@@ -175,7 +175,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 const refreshAccessToken = asyncHandler(async (req, res) => {
     
     const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
-    if(incomingRefreshToken){
+    if(!incomingRefreshToken){
         throw new ApiErrors(400, "unauthorized, please login again");
     }
 
@@ -197,7 +197,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             secure: true, // Cookie is only sent over HTTPS
         }
     
-        const { accessToken, newRefreshToken } = await generateAccessAndRefreshTokens(user._id);
+        const { accessToken, refreshToken:newRefreshToken } = await generateAccessAndRefreshTokens(user._id);
     
         return res
             .status(200)
@@ -214,30 +214,35 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 
 const changeCurreentPassword = asyncHandler(async (req, res) => {
-    // req body -> data
     const { oldPassword, newPassword } = req.body; 
 
-    // Validate the input
-    const user = await User.findById(req.body?._id)  
-    // Check if user exists
-    const isPasswordCorrect = await user.isPasswordCorrect(oldPassword)
-    if(!isPasswordCorrect) {
+    // Fetch user from req.user (set by verifyJWT)
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+        throw new ApiErrors(404, "User not found");
+    }
+
+    const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+    if (!isPasswordCorrect) {
         throw new ApiErrors(400, "Old password is incorrect");
     }
 
-    user.password = newPassword; // Update the password
-    await user.save({validateBeforeSave: false}); // Save the updated user document
+    user.password = newPassword; 
+    await user.save({ validateBeforeSave: false });
 
-    return res.status(200).json(new ApiResponse(200, null, "Password changed successfully"));   
+    return res
+        .status(200)
+        .json(new ApiResponse(200, null, "Password changed successfully"));   
+});
 
-})
 
 
 
 const getCurrrentUser = asyncHandler(async (req, res) => {
     return res
     .status(200)
-    .json(200, req.user, "Current user fetched successfully");
+   .json(new ApiResponse(200, req.user, "Current user fetched successfully"));
 })
 
 
