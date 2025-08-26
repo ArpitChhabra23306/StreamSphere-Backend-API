@@ -30,7 +30,7 @@ router.route("/logout").post(verifyJWt, logoutUser); //thats why next was used i
 router.route("/refresh-token").post(refreshAccessToken);
 
 router.post("/change-password", verifyJWt, changeCurreentPassword);
-router.post("/current-user",verifyJWt, getCurrrentUser);
+router.get("/current-user",verifyJWt, getCurrrentUser);
 router.route("/update-account").patch(verifyJWt,updateAccountDetails);
 router.route("/avatar").patch(verifyJWt, upload.single("avatar"), updateAvatar);
 router.route("/cover-image").patch(verifyJWt, upload.single("coverImage"), updateCoverImage);

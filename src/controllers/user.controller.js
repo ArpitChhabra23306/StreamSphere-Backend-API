@@ -4,6 +4,8 @@ import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";  // required for new mongoose.Types.ObjectId(...)
+
 
 
 
@@ -164,8 +166,8 @@ const logoutUser = asyncHandler(async (req, res) => {
 
     return res
         .status(200)
-        .cookie("accessToken", options) // Clear the access token cookie
-        .cookie("refreshToken", options) // Clear the refresh token cookie
+        .clearCookie("accessToken", options)
+        .clearCookie("refreshToken", options) // Clear the refresh token cookie
         .json(new ApiResponse(200, null, "User logged out successfully"));
 
 });
@@ -274,7 +276,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 const updateAvatar = asyncHandler(async (req, res) => {
 
     // req body -> data
-    const avatarLocalPath = req.files?.path
+    const avatarLocalPath = req.file?.path
     if (!avatarLocalPath) {
         throw new ApiErrors(400, "avatar file is missing");
     }
@@ -305,7 +307,7 @@ const updateAvatar = asyncHandler(async (req, res) => {
 const updateCoverImage = asyncHandler(async (req, res) => {
 
     // req body -> data
-    const coverImageLocalPath = req.files?.path
+    const coverImageLocalPath = req.file?.path
     if (!coverImageLocalPath) {
         throw new ApiErrors(400, "coverImgae file is missing");
     }
