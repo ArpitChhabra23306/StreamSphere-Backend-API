@@ -42,6 +42,7 @@ const videoSchema = new Schema(
     }
 )
 
+
 videoSchema.plugin(mongooseAggregatePaginate); // Add pagination plugin to the schema, this allows us to use aggregate with pagination
 
 
