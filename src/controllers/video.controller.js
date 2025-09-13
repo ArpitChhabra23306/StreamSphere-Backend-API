@@ -13,8 +13,43 @@ const getAllVideos = asyncHandler(async (req, res) => {
 })
 
 const publishAVideo = asyncHandler(async (req, res) => {
-    const { title, description} = req.body
+    
     // TODO: get video, upload to cloudinary, create video
+    const { title, description} = req.body;
+    if(title, description){
+        throw new ApiError(400, "Title and description are required");
+    }
+
+    //taking files from multer from route callback
+    const videoFileLocalPath = req.files?.videoFile?.[0]?.path;
+    const thumbnailLocalPath = req.files?.thumbnail?.[0]?.path;
+    //checking if file is present or not
+    if(!videoFileLocalPath || !thumbnailLocalPath){
+        throw new ApiError(400, "Video file and thumbnail are required");
+    }
+
+    //uploading on cloudinary
+    const videoFile = await uploadOnCloudinary(videoFileLocalPath);
+    const thumbnail = await uploadOnCloudinary(thumbnailLocalPath);
+    //checking upload success
+    if(!videoFile?.url || !thumbnail?.url){
+        throw new ApiError(500, "Error in uploading files, please try again");
+    }
+
+    //creating video document in database
+    const video = await Video.create({
+        title,
+        description,
+        videoFile: videoFile.url,
+        thumbnail: thumbnail.url,
+        duration: videoFile.duration,
+        owner: req.user._id //from JWT
+    });
+
+    // sending response
+    return res
+        .status(201)
+        .json(new ApiResponse(201, video, "Video published successfully"));
 })
 
 const getVideoById = asyncHandler(async (req, res) => {
